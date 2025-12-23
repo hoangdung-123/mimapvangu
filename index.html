@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Chúc Noel</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: monospace;
+    color: white;
+    background-color: pink;
+  }
+
+  /* Container chứa 3 ảnh nền */
+  .bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+  }
+
+  .bg-image {
+    flex: 1;                  /* chia đều 3 ảnh */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 2s;
+    height: 100%;
+  }
+
+  /* Chữ trắng */
+  #container {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+    white-space: pre;
+    text-align: center;
+    width: 90%;
+    pointer-events: none;
+  }
+
+  .line {
+    margin-bottom: 10px;
+  }
+
+  /* Tuyết rơi */
+  .snow {
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-container" id="bgContainer"></div>
+<div id="container"></div>
+
+<script>
+// ==== Danh sách ảnh ====
+const images = [
+  'mimimi.jpg',
+  'mimimi1.jpg',
+  'mimimi2.jpg'
+];
+
+const bgContainer = document.getElementById("bgContainer");
+
+// Tạo div ảnh
+images.forEach(src => {
+    const div = document.createElement('div');
+    div.className = 'bg-image';
+    div.style.backgroundImage = `url('${src}')`;
+    bgContainer.appendChild(div);
+});
+
+// ==== Hiệu ứng fade-in từng ảnh ====
+function showImagesSequentially() {
+    const divs = document.querySelectorAll('.bg-image');
+    let i = 0;
+    function next() {
+        if(i >= divs.length) return;
+        divs[i].style.opacity = 1;  // fade-in
+        i++;
+        setTimeout(next, 1000);
+    }
+    next();
+}
+
+// ==== Chữ trắng từng chữ ====
+const lines = [
+    "Anh chuc em Mi co 1 mua Noel that la vui ve va am ap",
+    "Anh chuc em luon hoc gioi va xinh dep nha",
+    "Mau an chong lon de ve bao hieu cho ba me hihihi",
+    "Anh iu em vai cut luon hehehehehehehehehehe"
+];
+
+const container = document.getElementById("container");
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function printLines() {
+    for(let i = 0; i < lines.length; i++){
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'line';
+        container.appendChild(lineDiv);
+        for(let k = 0; k < lines[i].length; k++){
+            const span = document.createElement('span');
+            span.style.color = "white";
+            span.textContent = lines[i][k];
+            lineDiv.appendChild(span);
+            await sleep(60);
+        }
+        await sleep(300);
+    }
+}
+
+// ==== Tuyết rơi ====
+function createSnow() {
+    const sn = document.createElement("div");
+    sn.className = "snow";
+    const symbols = ["*", "❄", "."];
+    sn.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    sn.style.left = Math.random()*window.innerWidth + "px";
+    sn.style.top = "-20px";
+    document.body.appendChild(sn);
+
+    let fall = setInterval(()=>{
+        let top = parseFloat(sn.style.top);
+        if(top > window.innerHeight){
+            sn.remove();
+            clearInterval(fall);
+        } else {
+            sn.style.top = top + 3 + "px";
+        }
+    },50);
+}
+
+// ==== Khởi chạy ====
+window.addEventListener('load', ()=>{
+    showImagesSequentially();
+    printLines();
+    setInterval(createSnow, 200);
+});
+</script>
+
+</body>
+</html>
